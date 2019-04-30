@@ -33,16 +33,17 @@
     visibility: hidden;
     position: relative;
     width: 160px;
-    height: 20px;
-    bottom: 40px;
+    /*height: 20px;*/
+    bottom: 80px;
     background-color: #d1dac3;
+
 }
 
 .product:hover{
     background: #d1dac3;
 }
 
-.product :hover .overlay{
+.product:hover .overlay{
     visibility: visible;
 }
 

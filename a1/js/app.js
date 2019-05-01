@@ -60,7 +60,7 @@ var inactiveTime = 0;
 // Inactivity timer
 var timerIncrement = function() {
     inactiveTime ++;
-    if(inactiveTime >= 300){
+    if(inactiveTime >= 1800){
     	alert( "Hey there! Are you still planning to buy something?");
     	inactiveTime = 0;
     }

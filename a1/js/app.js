@@ -5,7 +5,6 @@ function Store(initialStock){
 	// constructor
 	this.stock = initialStock;
 	this.cart = {}; //associate array - an object
-	this.cartPrice = 0;
 	this.onUpdate = null;
 };
 
@@ -18,7 +17,6 @@ Store.prototype.addItemToCart = function(itemName){
 			}else{
 				this.cart[itemName] = 1;
 			}
-			this.cartPrice += this.stock[itemName][PRICE];
 			this.stock[itemName][QUANTITY]--;
 			console.log("Added" + itemName + " - Count: " + this.cart[itemName]);
 		}else{
@@ -31,7 +29,7 @@ Store.prototype.addItemToCart = function(itemName){
 	inactiveTime = 0;
 
 	//re-render product item view
-	store.onUpdate(itemName);
+	this.onUpdate(itemName);
 }
 
 Store.prototype.removeItemFromCart = function(itemName){
@@ -42,7 +40,6 @@ Store.prototype.removeItemFromCart = function(itemName){
 				if (this.cart[itemName] == 0)
 					delete this.cart[itemName];
 				this.stock[itemName][QUANTITY]++;
-				this.cartPrice -= this.stock[itemName][PRICE];
 		}else{
 			console.log("No "+ itemName + " in the cart.");
 		}
@@ -53,15 +50,14 @@ Store.prototype.removeItemFromCart = function(itemName){
 	inactiveTime = 0;
 
 	//re-render product item view
-	store.onUpdate(itemName);
+	this.onUpdate(itemName);
 }
 
-var renderProductModal = function(container, item, cart){
-	var count = cart[item];
-	if(count == undefined){
+var renderProductModal = function(container, item, count, unitPrice){
+	if(count == undefined)
 		count = 0;
-	}
-	var price = count * store.stock[item][PRICE];
+	var price = count * unitPrice;
+
 	var itemText = document.createTextNode(item + ": " + count + " = $" + price + "   ");
 	container.replaceChild (itemText, container.firstChild);
 }
@@ -69,22 +65,30 @@ var renderProductModal = function(container, item, cart){
 var updateModalPrice = function(price){
 	var priceDiv = document.getElementById("modal-price");
 	priceDiv.innerHTML = "$" + price;
+	console.log(price);
 }
 	
 
-var renderCart = function(container, storeInstance){
+function renderCart(container, storeInstance){
 	var cart = storeInstance.cart;
+	container.innerHTML = "";
+	var price = 0;
 
 	for (let item of Object.keys(cart)) {
-		var productModal =  document.getElementById("product-modal-" + item);
-		if(productModal == undefined){
+		console.log(item);
+		console.log(storeInstance.stock[item]);
+		var unitPrice = storeInstance.stock[item].price;
+		var label = storeInstance.stock[item].label;
+		price += cart[item] * unitPrice;
+		// var productModal =  document.getElementById("product-modal-" + item);
+		// if(productModal == undefined){
 	  		let itemInfo = document.createElement("div");
 	  		
 	  		// let itemText = document.createTextNode(item + ": "+ cart[item] + "   ");
 	  		let itemSpan = document.createElement("span");
 	  		itemSpan.appendChild(document.createTextNode(""));
 	  		itemSpan.id = "product-modal-" + item;
-	  		renderProductModal(itemSpan, item, cart)
+	  		renderProductModal(itemSpan, label, cart[item], unitPrice)
 	  		itemInfo.appendChild(itemSpan);
 
 	  		let addItem = document.createElement("button")
@@ -98,28 +102,29 @@ var renderCart = function(container, storeInstance){
 	  		itemInfo.appendChild(deleteItem);
 	  		
 	  		container.appendChild(itemInfo);
-	  	}
+	  	// }
 	}
-	inactiveTime = 0;
+	container.appendChild(document.createTextNode(price));
+	updateModalPrice(price);
 }
-
-
 
 var store = new Store(products);
 var inactiveTime = 0;
 
-var showCart = function(modal){
-	modal.style.display = "block";
-	renderCart(document.getElementById("modal-content"),store)
+function showCart(cart){
+	document.getElementById('modal').style.display = "block";
+	renderCart(document.getElementById("modal-content"), store);
+	inactiveTime = 0;
 }
 
 store.onUpdate = function(itemName){
 	renderProduct( document.getElementById("product-" + itemName), store, itemName);
-	var productModal =  document.getElementById("product-modal-" + itemName);
-	if(productModal != undefined){
-		renderProductModal( productModal, itemName, store.cart );
-	}
-	updateModalPrice(store.cartPrice);
+	// var productModal =  document.getElementById("product-modal-" + itemName);
+	// if(productModal != undefined){
+	// 	renderProductModal( productModal, itemName, store.cart );
+	// }
+	renderCart(document.getElementById('modal-content'),this)
+
 }
 
 // Inactivity timer
@@ -132,67 +137,66 @@ var timerIncrement = function() {
 }
 
 
-var renderProduct = function(container, storeInstance,itemName){
-	if(store.stock == undefined || store.stock[itemName] == undefined){
+var renderProduct = function(container, storeInstance, itemName){
+	if(storeInstance.stock == undefined || storeInstance.stock[itemName] == undefined){
 		console.log("Cannot find item in store.");
 		return;
 	}
-	
-	var li1 = document.createElement("li");
-	li1.classList.add("product");
-	li1.id = "product-" + itemName;
+	container.innerHTML = "";
 	var div1 = document.createElement("div");
 
-	var name = document.createTextNode(itemName);
+	var name = document.createTextNode(storeInstance.stock[itemName]["label"]);
 	var image = document.createElement("img");
-	image.setAttribute("src", "images/"+ itemName + "_"+"$"+ store.stock[itemName].price+".png");
+	image.setAttribute("src", storeInstance.stock[itemName]["imageUrl"]);
 	image.classList.add("itemImage");
 
 	var div2 = document.createElement("div");
 	div2.classList.add("overlay");
 
 	var price = document.createElement("div");
-	price.appendChild(document.createTextNode("$" + store.stock[itemName].price));
+	price.appendChild(document.createTextNode("$" + storeInstance.stock[itemName].price));
 	div2.appendChild(price);
 
-	if (store.stock[itemName].quantity > 0){
+	if (storeInstance.stock[itemName].quantity > 0){
 		var addBtn = document.createElement("button");
 		addBtn.classList.add("btn-add");
 		addBtn.appendChild(document.createTextNode("Add to Cart"));
 		div2.appendChild(addBtn);
-		addBtn.addEventListener("click", function(){store.addItemToCart(itemName)}, false);
+		addBtn.addEventListener("click", function(){storeInstance.addItemToCart(itemName)}, false);
 	}
 
-	if(store.cart[itemName] > 0){
+	if(storeInstance.cart[itemName] > 0){
 		var removeBtn = document.createElement("button");
 		removeBtn.classList.add("btn-remove");
 		removeBtn.appendChild(document.createTextNode("Remove from Cart"));
 		div2.appendChild(removeBtn);
-		removeBtn.addEventListener("click", function(){store.removeItemFromCart(itemName)}, false);
+		removeBtn.addEventListener("click", function(){storeInstance.removeItemFromCart(itemName)}, false);
 	}
 
 	div1.appendChild(image);
 	div1.appendChild(name);
 	div1.appendChild(div2);
-	li1.appendChild(div1);
-
-	container.parentNode.replaceChild(li1, container);
+	container.appendChild(div1);
 }
 
 
 var renderProductList = function (container, storeInstance){
-	var ul = document.createElement("ul");
-	ul.id = "productList";
+	container.id = "productView";
+	container.innerHTML = "";
 	var items = Object.keys(storeInstance.stock);
+
 	for(var i = 0; i < items.length; i++){
 		let itemDiv = document.createElement("li");
-		ul.appendChild(itemDiv);
-		renderProduct(itemDiv,store,items[i])
+		itemDiv.classList.add("product");
+		itemDiv.id = "product-" + items[i];
+
+		container.appendChild(itemDiv);
+		renderProduct(itemDiv, storeInstance, items[i])
 	}
-	container.parentNode.replaceChild(ul,container);
 }
 
-var hideCart = function(modal) {
+var hideCart = function() {
+	var modal = document.getElementById('modal');
 	modal.style.display = "none";
 }
 
@@ -206,23 +210,23 @@ window.onload = function() {
 
 	// When the user clicks on the button, open the modal 
 	showCartbtn.onclick = function() {
-	  	showCart(cartModal);
+	  	showCart(store.cart);
 	}
 
 	closeSpan.onclick = function() {
-	  	hideCart(cartModal);
+	  	hideCart();
 	}
 
 	// When the user clicks anywhere outside of the modal, close it
 	window.onclick = function(event) {
 	  if (event.target == cartModal) {
-		hideCart(cartModal);
+		hideCart();
 	  }
 	}
 
 	document.onkeydown = function(e) {
      if (e.key === "Escape") { 
-       	hideCart(cartModal);
+       	hideCart();
     }
 };
 

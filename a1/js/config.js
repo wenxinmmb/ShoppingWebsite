@@ -51,7 +51,7 @@ const products = {
 	
 	"PC2":{"label": "PC for game lovers",
 			"imageUrl": "images/PC2_$450.png",
-			"price": 450,
+			"price": 400,
 			"quantity": 5,},
 	
 	"PC3":{"label": "PC for students",

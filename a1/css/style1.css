@@ -1,22 +1,14 @@
-
 button {
-  /*background-color: #4CAF50; */
-  /*background-color: #b1d37b;*/
-  /*border: none;*/
-  border: 2px solid;
   background-color: rgba(255,255,255,0.2);
-  
-  cursor: pointer;
-
-  padding: 3px 5px ;
-  border-color: #4CAF50;
   color: green;
 
   margin-left: 10px;
   margin-bottom: 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  border: 2px solid;
+  border-color: #4CAF50;
+  padding: 3px 5px ;
+
+  cursor: pointer;
 }
 
 button:hover {
@@ -24,7 +16,8 @@ button:hover {
   color: white;
 }
 
-.menuItem{height: 50px; 
+.menuItem{
+    height: 50px; 
     width: 250px;
     background: #b1d37b;
     margin: 10px;
@@ -33,6 +26,7 @@ button:hover {
     vertical-align: middle;
     line-height: 50px; 
 }
+
 .menuItem:hover{
     background: green;
     color: rgb(165, 228, 217);
@@ -62,7 +56,6 @@ button:hover {
     width: 160px;
     height: 60px;
     bottom: 80px;
-    /*background-color: #d1dac3;*/
     background-color: rgba(209,218,195,0.8);
 }
 
@@ -72,15 +65,26 @@ button:hover {
 
 .product:hover .overlay{
     visibility: visible;
-    /*display: block;*/
 }
 
-#header { height: 350px; width: 1000px; margin: auto;}
-#logo { height: 300px; width: 300px; margin:auto;}
-#banner { height: 300px; width: 600px; padding-left: 50px}
+#header { 
+    height: 350px; width: 1000px; margin: auto;
+}
 
-#content { width: 1000px; margin: auto;}
-#menu { width: 300px; 
+#logo { 
+    height: 300px; width: 300px; margin:auto;
+}
+
+#banner { 
+    height: 300px; width: 600px; padding-left: 50px
+}
+
+#content { 
+    width: 1000px; margin: auto;
+}
+
+#menu { 
+    width: 300px; 
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -97,10 +101,12 @@ button:hover {
     display: inline-block;
 }
 
-#footer { height: 200px; 
+#footer { 
+    height: 200px; 
     width: 1000px; 
     margin: auto;
-    margin-top: 15px;}
+    margin-top: 15px;
+}
 
 /* The Modal (background) */
 #modal {
@@ -122,7 +128,7 @@ button:hover {
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 80%;
 }
 
 /* The Close Button */

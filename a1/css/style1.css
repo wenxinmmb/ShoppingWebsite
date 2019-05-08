@@ -1,9 +1,8 @@
 button {
   background-color: rgba(255,255,255,0.2);
   color: green;
-
-  margin-left: 10px;
-  margin-bottom: 10px;
+  
+  margin: 10px;
   border: 2px solid;
   border-color: #4CAF50;
   padding: 3px 5px ;

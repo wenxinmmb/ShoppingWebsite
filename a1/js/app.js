@@ -1,10 +1,17 @@
 const QUANTITY = "quantity";
 const PRICE = "price";
 
-function Store(initialStock){
-	this.stock = initialStock;
+
+function Store(serverUrl){
+	this.serverUrl = serverUrl;
+	this.stock = {};
 	this.cart = {}; 
 	this.onUpdate = null;
+	// ajaxGet(serverUrl);
+	ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", 
+		function(val){this.stock = val;}, 
+		function(err){console.log(err)});
+
 };
 
 Store.prototype.addItemToCart = function(itemName){
@@ -52,11 +59,16 @@ Store.prototype.removeItemFromCart = function(itemName){
 	this.onUpdate(itemName);
 }
 
-var store = new Store(products);
+const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
+var store = new Store(storeUrl);
 var inactiveTime = 0;
 
 store.onUpdate = function(itemName){
-	renderProduct( document.getElementById("product-" + itemName), store, itemName);
+	if(itemName == undefined){
+		renderProductList(document.getElementById("productView"), store);
+	}else{
+		renderProduct(document.getElementById("product-" + itemName), store, itemName);
+	}
 	renderCart(document.getElementById('modal-content'),this)
 }
 

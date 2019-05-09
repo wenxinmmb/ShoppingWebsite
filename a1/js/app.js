@@ -5,12 +5,9 @@ const PRICE = "price";
 function Store(serverUrl){
 	this.serverUrl = serverUrl;
 	this.stock = {};
-	this.cart = {}; 
+	// this.cart = {"Keyboard": 1}; 
+	this.cart = {};
 	this.onUpdate = null;
-	// ajaxGet(serverUrl);
-	ajaxGet("https://cpen400a-bookstore.herokuapp.com/products", 
-		function(val){this.stock = val;}, 
-		function(err){console.log(err)});
 
 };
 
@@ -59,8 +56,27 @@ Store.prototype.removeItemFromCart = function(itemName){
 	this.onUpdate(itemName);
 }
 
+Store.prototype.syncWithServer = function(onSync){
+	ajaxGet(this.serverUrl + "/products",function(val, context){
+		var delta = calDelta(val, context);
+		context.stock = val;
+		var cartItems = Object.keys(context.cart);
+		for(var i = 0; i < cartItems.length; i++ ){
+			context.stock[cartItems[i]].quantity -= context.cart[cartItems[i]];
+		}
+		context.onUpdate();
+		if(onSync !== undefined)
+			onSync(delta);
+		// renderProductList(document.getElementById("productView"), context);
+	},
+	function(err){
+		console.log("Cannot retrieve data")
+	}, this);
+}
+
 const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
 var store = new Store(storeUrl);
+store.syncWithServer();
 var inactiveTime = 0;
 
 store.onUpdate = function(itemName){
@@ -81,9 +97,10 @@ var timerIncrement = function() {
     }
 }
 
+
 window.onload = function() {
-	renderProductList(document.getElementById("productView"), store);
-	
+	// renderProductList(document.getElementById("productView"), store);
+
 	// Get the button that opens the modal
 	var cartModal = document.getElementById('modal');
 	var showCartbtn = document.getElementById("btn-show-cart");

@@ -1,83 +1,77 @@
-var ajaxGet = function (url, onSuccess, onError){
+var getDiff = function(obj1, obj2){
+				var res = {}
+				let obitem = Object.keys(obj1);
+				for(var i = 0; i< obitem.length; i++){
+					if(obj1[obitem[i]] !== obj2[obitem[i]]){
+						if(typeof(obj1[obitem[i]]) === "number"){
+							res[obitem[i]] = obj1[obitem[i]] - obj2[obitem[i]];
+						}else{
+							res[obitem[i]] = obj1[obitem[i]];
+						}
+					}
+				}
+				return res;
+			}
+
+var calDelta = function(serverStock, context){
+		var delta = {};
+		var items = Object.keys(serverStock);
+		var stockCopy = Object.keys(context.stock);
+
+		for(var i = 0; i < items.length; i++){
+			let itemName = items[i];
+			let index = stockCopy.indexOf(itemName);
+
+			if( index == -1){
+				delta[itemName] = serverStock[itemName];
+			}else{
+				if(serverStock[itemName] !== context.stock[itemName]){
+					delta[itemName] = getDiff(serverStock[itemName], context.stock[itemName]);
+				}
+				stockCopy.splice(index, 1)
+			}
+		}
+
+		for(var i = 0; i < stockCopy.length; i++){
+			let itemName = stockCopy[i];
+			delta[itemsName] = -context.stock[itemsName];
+		}
+		console.log("Delta");
+		console.log(delta)
+		return delta;
+	}
+
+var ajaxGet = function (url, onSuccess, onError, context){
 	var count = 0;
 	
 	var sendRequest = function(){ 	
-				let x = new XMLHttpRequest();
-				x.open("GET", url);
+		let xhr = new XMLHttpRequest();
+		xhr.open("GET", url);
 
-				// event handling
-				x.onreadystatechange = function(){
-			      	if (x.readyState === 4){
-			         	if (x.status === 200){
-			            	console.log(count + " : successfully");
-			            	var resp = x.responseText;
-			            	var respJson = JSON.parse(resp);
-			            	console.log(respJson);
-			            	onSuccess(respJson);
-			         	}else{
-			            	console.log( count + " : failed");
-			            	count++;
-			            	if(count < 3){
-			            		sendRequest();
-			            	}else{
-			            		onError(x.status);
-			            	}
-			         	}
-			      	}
-				}
-				x.send();
+		// event handling
+		xhr.timeout = 5000;
+		xhr.onreadystatechange = function(){
+	      	if (xhr.readyState === 4){
+	         	if (xhr.status === 200){
+	            	console.log(count + " : successfully");
+	            	var resp = xhr.responseText;
+	            	var respJson = JSON.parse(resp);
+	            	console.log(respJson);
+	            	onSuccess(respJson, context);
+	         	}else{
+	            	console.log( count + " : failed " + xhr.status);
+	            	count++;
+	            	if(count < 3){
+	            		sendRequest();
+	            	}else{
+	            		onError(xhr.status);
+	            	}
+	         	}
+	      	}
+		};
+
+
+		xhr.send();
  	};
-
-	// var sendRequest = function(){ 
-	//  	return new Promise (
-	// 		function(resolve, reject) {	
-	// 			let temp = count;	
-	// 			let x = new XMLHttpRequest();
-	// 			x.open("GET", url);
-
-	// 			// event handling
-	// 			x.onreadystatechange = function(){
-	// 		      	if (x.readyState === 4){
-	// 		         	if (x.status === 200){
-	// 		            	console.log(temp + " : successfully");
-	// 		            	var resp = x.responseText;
-	// 		            	var respJson = JSON.parse(resp);
-	// 		            	console.log(respJson);
-	// 		            	resolve(respJson);
-	// 		         	}else{
-	// 		            	console.log( temp + " : failed");
-	// 		            	reject(x.status);
-	// 		         	}
-	// 		      	}
-	// 			}
-	// 			x.send();
-	// 		});
- // 	};
-
-	// var retry = function(){
-	// 	count++;
-	// 	console.log(count);
-	// 	if(count == 3){
-	// 		console.log("Failed three times");
-	// 		Promise.reject();
-	// 	}else{
-	// 		console.log("Initalize a new promise");
-	// 		return sendRequest();
-	// 	}
-	// }
-
-	
-	// return sendRequest(
-	// 	).then(
-	// 		function(val){console.log("S"); return val;},retry()
-	// 	).then(
-	// 		function(val){console.log("S"); return val;},retry()
-	// 	).then(
-	// 		function(val){
-	// 			onSuccess(val)
-	// 		},function(e){
-	// 			onError(e);}
-	// );
-	
-	sendRequest();
+ 	sendRequest();
 }

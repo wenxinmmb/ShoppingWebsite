@@ -37,7 +37,14 @@ var renderCart = function(container, storeInstance){
 	  	container.appendChild(itemInfo);
 	}
 	// add total price
-	container.appendChild(document.createTextNode("Total Price : $" +	price));
+	var totalPrice = document.createElement("div");
+	totalPrice.appendChild(document.createTextNode("Total Price : $" +	price));
+	container.appendChild(totalPrice);
+
+	var checkOut = document.createElement("button");
+	checkOut.innerHTML ="Check out";
+	container.appendChild(checkOut);
+
 }
 
 var hideCart = function() {

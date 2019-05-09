@@ -24,9 +24,15 @@ var renderProduct = function(container, storeInstance, itemName){
 		addBtn.appendChild(document.createTextNode("Add"));
 		div2.appendChild(addBtn);
 		addBtn.addEventListener("click", function(){storeInstance.addItemToCart(itemName)}, false);
+	}else{
+		if(storeInstance.cart[itemName] == undefined){
+			var divStock = document.createElement("button");
+			divStock.appendChild(document.createTextNode("Out of Stock"));
+			div2.appendChild(divStock);
+		}
 	}
 
-	if(storeInstance.cart[itemName] > 0){
+	if(storeInstance.cart != undefined && storeInstance.cart[itemName] > 0){
 		var removeBtn = document.createElement("button");
 		removeBtn.classList.add("btn-remove");
 		removeBtn.appendChild(document.createTextNode("Remove"));
@@ -45,7 +51,7 @@ var renderProductList = function (container, storeInstance){
 	container.id = "productView";
 	container.innerHTML = "";
 	var items = Object.keys(storeInstance.stock);
-
+	console.log(items);
 	for(var i = 0; i < items.length; i++){
 		let itemDiv = document.createElement("li");
 		itemDiv.classList.add("product");

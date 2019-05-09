@@ -74,6 +74,44 @@ Store.prototype.syncWithServer = function(onSync){
 	}, this);
 }
 
+Store.prototype.checkOut = function(onFinish){
+	var curStock = this.stock;
+
+	this.syncWithServer(function(delta){
+		console.log(delta);
+		var comments = [];
+
+		for(let item of Object.keys(delta)){
+			
+			if(delta[item].hasOwnProperty("quantity") && delta[item].quantity != 0){
+				let origQuantity = curStock[item].quantity + delta[item].quantity;
+				let comment = "Quantity of " + item + 
+					((delta[item].quantity > 0) ? " increased from " : " decresed from ") + 
+					origQuantity + 
+					" to "+ curStock[item].quantity + "\n";
+				console.log(comment);
+				comments.push(comment);
+			}
+
+			if(delta[item].hasOwnProperty("price") && delta[item].price != 0){
+				let comment = "Price of " + item + 
+					((delta[item].price > 0) ? " increased from $" : " decresed from $") + 
+					(curStock[item].price + delta[item].price) + 
+					" to $"+ curStock[item].price + "\n";
+				console.log(comment);
+				comments.push(comment);
+			}
+		}
+		if(comments.length > 0){
+			console.log(comments);
+		}else{
+			console.log(calTotalPrice());
+		}
+
+	});
+	onFinish();
+}
+
 const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
 var store = new Store(storeUrl);
 store.syncWithServer();

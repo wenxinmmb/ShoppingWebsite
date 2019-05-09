@@ -7,15 +7,34 @@ var renderProductModal = function(container, item, count, unitPrice){
 	container.replaceChild (itemText, container.firstChild);
 }
 
+var calTotalPrice = function(){
+	var price = 0;
+	var cart = store.cart;
+	for(let item of Object.keys(cart)){
+		price += cart[item] * store.stock[item].price;
+	}
+	return price;
+}
+
+var checkOutHandler = function(){
+	var checkBtn = document.getElementById("btn-check-out");
+	checkBtn.disabled = true;
+
+	store.checkOut(function(){
+		checkBtn.disabled = false;
+		console.log("enabled");
+	});
+}
+
 var renderCart = function(container, storeInstance){
 	var cart = storeInstance.cart;
 	container.innerHTML = "";
-	var price = 0;
+	// var price = 0;
 
 	for (let item of Object.keys(cart)) {
 		var unitPrice = storeInstance.stock[item].price;
 		var label = storeInstance.stock[item].label;
-		price += cart[item] * unitPrice;
+		
 
 	  	let itemInfo = document.createElement("div");
 	  	let itemSpan = document.createElement("span");
@@ -38,13 +57,14 @@ var renderCart = function(container, storeInstance){
 	}
 	// add total price
 	var totalPrice = document.createElement("div");
-	totalPrice.appendChild(document.createTextNode("Total Price : $" +	price));
+	totalPrice.appendChild(document.createTextNode("Total Price : $" +	calTotalPrice()));
 	container.appendChild(totalPrice);
 
 	var checkOut = document.createElement("button");
 	checkOut.innerHTML ="Check out";
+	checkOut.id = "btn-check-out";
+	checkOut.addEventListener("click", checkOutHandler, true);
 	container.appendChild(checkOut);
-
 }
 
 var hideCart = function() {

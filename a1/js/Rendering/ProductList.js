@@ -51,7 +51,6 @@ var renderProductList = function (container, storeInstance){
 	container.id = "productView";
 	container.innerHTML = "";
 	var items = Object.keys(storeInstance.stock);
-	console.log(items);
 	for(var i = 0; i < items.length; i++){
 		let itemDiv = document.createElement("li");
 		itemDiv.classList.add("product");

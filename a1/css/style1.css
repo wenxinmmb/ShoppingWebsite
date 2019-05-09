@@ -134,3 +134,8 @@ button:hover {
 #btn-hide-cart {  
   margin:auto;
 }
+
+#btn-check-out:disabled {
+  background-color: white;
+  color: grey;
+}

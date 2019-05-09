@@ -5,7 +5,6 @@ const PRICE = "price";
 function Store(serverUrl){
 	this.serverUrl = serverUrl;
 	this.stock = {};
-	// this.cart = {"Keyboard": 1}; 
 	this.cart = {};
 	this.onUpdate = null;
 
@@ -67,7 +66,6 @@ Store.prototype.syncWithServer = function(onSync){
 		context.onUpdate();
 		if(onSync !== undefined)
 			onSync(delta);
-		// renderProductList(document.getElementById("productView"), context);
 	},
 	function(err){
 		console.log("Cannot retrieve data")
@@ -137,7 +135,6 @@ var timerIncrement = function() {
 
 
 window.onload = function() {
-	// renderProductList(document.getElementById("productView"), store);
 
 	// Get the button that opens the modal
 	var cartModal = document.getElementById('modal');

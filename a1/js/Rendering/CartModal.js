@@ -29,7 +29,6 @@ var checkOutHandler = function(){
 var renderCart = function(container, storeInstance){
 	var cart = storeInstance.cart;
 	container.innerHTML = "";
-	// var price = 0;
 
 	for (let item of Object.keys(cart)) {
 		var unitPrice = storeInstance.stock[item].price;

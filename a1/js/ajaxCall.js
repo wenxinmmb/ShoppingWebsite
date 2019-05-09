@@ -67,8 +67,6 @@ var ajaxGet = function (url, onSuccess, onError, context){
 	         	}
 	      	}
 		};
-
-
 		xhr.send();
  	};
  	sendRequest();

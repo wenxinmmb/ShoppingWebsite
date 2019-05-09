@@ -29,7 +29,7 @@ const products = {
 			"price": 50,
 			"quantity": 5,},
 	
-	"KeyboardCombo":{"label": "Keboard and mouse (red)",
+	"KeyboardCombo":{"label": "Keboard and mouse",
 			"imageUrl": "images/KeyboardCombo_$40.png",
 			"price": 40,
 			"quantity": 5,},
@@ -59,7 +59,7 @@ const products = {
 			"price": 300,
 			"quantity": 5,},
 	
-	"Tent":{"label": "Tent(grey and blue",
+	"Tent":{"label": "Tent(grey and blue)",
 			"imageUrl": "images/Tent_$100.png",
 			"price": 100,
 			"quantity": 5,},

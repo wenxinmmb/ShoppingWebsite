@@ -1,5 +1,22 @@
+button {
+  background-color: rgba(255,255,255,0.2);
+  color: green;
+  
+  margin: 5px;
+  border: 2px solid;
+  border-color: #4CAF50;
+  padding: 3px 5px ;
 
-.menuItem{height: 50px; 
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.menuItem{
+    height: 50px; 
     width: 250px;
     background: #b1d37b;
     margin: 10px;
@@ -8,6 +25,7 @@
     vertical-align: middle;
     line-height: 50px; 
 }
+
 .menuItem:hover{
     background: green;
     color: rgb(165, 228, 217);
@@ -16,7 +34,7 @@
 .product{
     display: inline-block;
     margin: 10px;
-    }
+}
 
 .product>div {
     width: 160px;
@@ -27,6 +45,8 @@
 .itemImage{
     width: 160px;
     height: 160px;
+    position: relative;
+    top: 0;
 }
 
 .overlay {
@@ -35,7 +55,7 @@
     width: 160px;
     height: 60px;
     bottom: 80px;
-    background-color: #d1dac3;
+    background-color: rgba(209,218,195,0.8);
 }
 
 .product:hover{
@@ -46,12 +66,24 @@
     visibility: visible;
 }
 
-#header { height: 350px; width: 1000px; margin: auto;}
-#logo { height: 300px; width: 300px; margin:auto;}
-#banner { height: 300px; width: 600px; padding-left: 50px}
+#header { 
+    height: 350px; width: 1000px; margin: auto;
+}
 
-#content { width: 1000px; margin: auto;}
-#menu { width: 300px; 
+#logo { 
+    height: 300px; width: 300px; margin:auto;
+}
+
+#banner { 
+    height: 300px; width: 600px; padding-left: 50px
+}
+
+#content { 
+    width: 1000px; margin: auto;
+}
+
+#menu { 
+    width: 300px; 
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -59,17 +91,21 @@
     vertical-align: top;
 }
 
-#productView { width: 600px; 
+#productView { 
+    width: 600px; 
     list-style-type: none;
     margin: 0;
     padding: 0;
     padding-left: 50px;
-    display: inline-block;}
+    display: inline-block;
+}
 
-#footer { height: 200px; 
+#footer { 
+    height: 200px; 
     width: 1000px; 
     margin: auto;
-    margin-top: 15px;}
+    margin-top: 15px;
+}
 
 /* The Modal (background) */
 #modal {
@@ -91,20 +127,15 @@
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 80%;
 }
-
 
 /* The Close Button */
-#btn-hide-cart {
-  color: #aaa;
+#btn-hide-cart {  
   margin:auto;
-  font-weight: bold;
 }
 
-#btn-hide-cart:hover,
-#btn-hide-cart:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+#btn-check-out:disabled {
+  background-color: white;
+  color: grey;
 }

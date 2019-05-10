@@ -3,6 +3,8 @@ const productList = ["Box1", "Box2", "Clothes1",
 "Keyboard", "Mice", "PC1",
 "PC2", "PC3", "Tent"];
 
+const storeUrl = "localhost:3000"
+
 const products = {
 	"Box1":{"label": "Transparent Boxes",
 			"imageUrl": "images/Box1_$10.png",

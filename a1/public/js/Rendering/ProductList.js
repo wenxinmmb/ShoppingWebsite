@@ -50,13 +50,14 @@ var renderProduct = function(container, storeInstance, itemName){
 var renderProductList = function (container, storeInstance){
 	container.id = "productView";
 	container.innerHTML = "";
-	var items = Object.keys(storeInstance.stock);
-	for(var i = 0; i < items.length; i++){
+
+	//TODO: check correctness
+	for(var item of displayed){
 		let itemDiv = document.createElement("li");
 		itemDiv.classList.add("product");
-		itemDiv.id = "product-" + items[i];
+		itemDiv.id = "product-" + item;
 
 		container.appendChild(itemDiv);
-		renderProduct(itemDiv, storeInstance, items[i])
+		renderProduct(itemDiv, storeInstance, item)
 	}
 }

@@ -40,7 +40,7 @@ var calDelta = function(serverStock, context){
 	return delta;
 }
 
-var ajaxGet = function (url, onSuccess, onError, context){
+var ajaxGet = function (url, onSuccess, onError){
 	var count = 0;
 	var sendRequest = function(){ 	
 		let xhr = new XMLHttpRequest();
@@ -55,7 +55,7 @@ var ajaxGet = function (url, onSuccess, onError, context){
 	            	var resp = xhr.responseText;
 	            	var respJson = JSON.parse(resp);
 	            	console.log(respJson);
-	            	onSuccess(respJson, context);
+	            	onSuccess(respJson);
 	         	}else{
 	            	console.log( count + " : failed " + xhr.status);
 	            	count++;
@@ -70,4 +70,25 @@ var ajaxGet = function (url, onSuccess, onError, context){
 		xhr.send();
  	};
  	sendRequest();
+}
+
+var ajaxPost = function (url, data, onSuccess, onError){
+	// data: payload of the request
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url);
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+	// event handling
+	xhr.timeout = 5000;
+	xhr.onreadystatechange = function(){
+      	if (xhr.readyState === 4){
+         	if (xhr.status === 200){
+            	console.log("Posted successfully" + xhr.responseText) ;
+            	onSuccess(xhr.responseText);
+         	}else{
+            	onError(xhr.status);
+         	}
+      	}
+	};
+	xhr.send(JSON.stringify(data));
 }

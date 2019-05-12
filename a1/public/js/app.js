@@ -7,7 +7,6 @@ function Store(serverUrl){
 	this.stock = {};
 	this.cart = {};
 	this.onUpdate = null;
-
 };
 
 Store.prototype.addItemToCart = function(itemName){
@@ -56,20 +55,22 @@ Store.prototype.removeItemFromCart = function(itemName){
 }
 
 Store.prototype.syncWithServer = function(onSync){
-	ajaxGet(this.serverUrl + "/products",function(val, context){
-		var delta = calDelta(val, context);
-		context.stock = val;
-		var cartItems = Object.keys(context.cart);
+	var self = this;
+	ajaxGet(this.serverUrl + "/products",function(val){
+		var delta = calDelta(val, self);
+		self.stock = val;
+		var cartItems = Object.keys(self.cart);
 		for(var i = 0; i < cartItems.length; i++ ){
-			context.stock[cartItems[i]].quantity -= context.cart[cartItems[i]];
+			self.stock[cartItems[i]].quantity -= self.cart[cartItems[i]];
 		}
-		context.onUpdate();
+		self.onUpdate();
 		if(onSync !== undefined)
 			onSync(delta);
+
 	},
 	function(err){
 		console.log("Cannot retrieve data")
-	}, this);
+	});
 }
 
 Store.prototype.checkOut = function(onFinish){
@@ -107,15 +108,76 @@ Store.prototype.checkOut = function(onFinish){
 		}
 
 	});
+
+	// TODO: terminate if user cancel because of price fluctuation
+	var order = {};
+	order["client_id"] = makeid(12);
+	order["cart"] = this.cart;
+	order["total"] = calTotalPrice();
+
+	ajaxPost(this.serverUrl + "/checkout",
+		order,
+		function(val){
+			alert("Checkout Successfully!\n" + "Reference Number: " + val)
+		},
+		function(err){
+			alert("Checkout Failed " + err);
+		}
+	);
 	onFinish();
 }
 
-const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
+Store.prototype.queryProducts = function(query, callback){
+	var self = this;
+	var queryString = Object.keys(query).reduce(function(acc, key){
+			return acc + (query[key] ? ((acc ? '&':'') + key + '=' + query[key]) : '');
+		}, '');
+	ajaxGet(this.serverUrl+"/products?"+queryString,
+		function(products){
+			Object.keys(products)
+				.forEach(function(itemName){
+					var rem = products[itemName].quantity - (self.cart[itemName] || 0);
+					if (rem >= 0){
+						self.stock[itemName].quantity = rem;
+					}
+					else {
+						self.stock[itemName].quantity = 0;
+						self.cart[itemName] = products[itemName].quantity;
+						if (self.cart[itemName] === 0) delete self.cart[itemName];
+					}
+					
+					self.stock[itemName] = Object.assign(self.stock[itemName], {
+						price: products[itemName].price,
+						label: products[itemName].label,
+						imageUrl: products[itemName].imageUrl
+					});
+				});
+			self.onUpdate();
+			callback(null, products);
+		},
+		function(error){
+			callback(error);
+		}
+	)
+}
+
+
+const storeUrl = "http://localhost:3000"
 var store = new Store(storeUrl);
-store.syncWithServer();
+var displayed = [];  // store the keys of products that should be displayed in the view
+
+store.syncWithServer(
+	//TODO: not sure the way to update display
+	function(delta){
+		displayed = Object.keys(delta);
+		renderProductList(document.getElementById("productView"), store);
+	}
+);
+
 var inactiveTime = 0;
 
 store.onUpdate = function(itemName){
+	renderMenu(document.getElementById("menuView"), store);
 	if(itemName == undefined){
 		renderProductList(document.getElementById("productView"), store);
 	}else{
@@ -132,7 +194,6 @@ var timerIncrement = function() {
     	inactiveTime = 0;
     }
 }
-
 
 window.onload = function() {
 

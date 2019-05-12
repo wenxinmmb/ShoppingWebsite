@@ -212,8 +212,8 @@ function renderMenu(container, storeInstance){
 	}
 }
 
-const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
-// const storeUrl = "http://localhost:3000"
+// const storeUrl = "https://cpen400a-bookstore.herokuapp.com";
+const storeUrl = "http://localhost:3000"
 var store = new Store(storeUrl);
 var displayed = []; 
 // store the keys of products that should be displayed in the view

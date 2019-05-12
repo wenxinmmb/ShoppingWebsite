@@ -31,10 +31,57 @@ app.use('/', express.static(STATIC_ROOT));			// Serve STATIC_ROOT at URL "/" as 
 app.get('/products', function(request, response) {
 	console.log(request.query);
 	bookstoreDb.getProducts(request.query).then(
-		function(products){response.json(products)},
-		function(err){response.send("500")} // TODO: need to test error state
+		function(products){
+			response.json(products)
+		},
+		function(err){
+			response.status(500).send({error: err});
+		} // TODO: need to test error state
 	);
 });
+
+// Configure POST '/checkout' endpoint
+app.post('/checkout', function (request, response) {
+	console.log(request.body)
+	
+	var order = request.body
+	if(!order.hasOwnProperty("client_id") || (typeof order["client_id"] !== 'string')){
+		response.status(500).send("Invalid Client Id.");
+		console.log("Invalid Client Id.")
+		return;
+	}
+
+	if(order.hasOwnProperty("cart")){
+		let cart = order["cart"];
+		for(var key in cart){
+			if((typeof key !== 'string') || (typeof cart[key] !== 'number')){
+				response.status(500).send("Invalid Cart Product.");	
+				console.log("Invalid Cart Product.")	
+				return;
+			}
+		}
+	}else{
+		response.status(500).send("Invalid Cart.");
+		console.log("Invalid Cart.")
+		return;		
+	}
+
+	if(!order.hasOwnProperty("total") || (typeof order["total"] !== 'number')){
+		response.status(500).send("Invalid Total.");
+		console.log("Invalid Total.")
+		return
+	}
+
+	bookstoreDb.addOrder(order).then(
+		function(id){
+			console.log("ref: " + id);
+			response.json(id)
+		},
+		function(err){
+			response.status(500).send({error: err});
+		} // TODO: need to test error state
+	);
+})
 
 // Start listening on TCP port
 app.listen(PORT, function(){
@@ -42,5 +89,4 @@ app.listen(PORT, function(){
 });
 
 var dbUrl = "mongodb://localhost:27017/"
-// var dbUrl = "mongodb://localhost:27017/cpen400a-bookstore"
 var bookstoreDb = storedb(dbUrl,"cpen400a-bookstore");

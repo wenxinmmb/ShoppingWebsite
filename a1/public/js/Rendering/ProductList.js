@@ -50,9 +50,9 @@ var renderProduct = function(container, storeInstance, itemName){
 var renderProductList = function (container, storeInstance){
 	container.id = "productView";
 	container.innerHTML = "";
-	// var items = Object.keys(storeInstance.stock);
+
+	//TODO: check correctness
 	for(var item of displayed){
-	// for(var i = 0; i < items.length; i++){
 		let itemDiv = document.createElement("li");
 		itemDiv.classList.add("product");
 		itemDiv.id = "product-" + item;

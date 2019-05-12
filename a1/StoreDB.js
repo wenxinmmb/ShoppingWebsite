@@ -38,10 +38,10 @@ StoreDB.prototype.getProducts = function(queryParams){
 
 			var priceRange = {}
 			if(queryParams.hasOwnProperty(minP)){
-				priceRange["$lte"] = queryParams[minP];
+				priceRange["$gte"] = parseInt(queryParams[minP]);
 			}
 			if(queryParams.hasOwnProperty(maxP)){
-				priceRange["$gte"] = queryParams[maxP];
+				priceRange["$lte"] = parseInt(queryParams[maxP]);
 			}
 
 			if(Object.keys(priceRange).length > 0){
@@ -68,7 +68,39 @@ StoreDB.prototype.getProducts = function(queryParams){
 
 StoreDB.prototype.addOrder = function(order){
 	return this.connected.then(function(db){
-		// TODO: Implement functionality
+		return new Promise(function(resolve, reject){
+			
+			// 2.  update product collection
+			var cart = order["cart"];
+			for( const product of Object.keys(cart)){
+				var query = {"_id": product};
+				console.log("query " + product);
+				db.collection("products").updateOne(
+					query,
+					{"$inc":{"quantity": -cart[product]}},
+					function(err,res){
+						if(err){
+							reject(err)
+						}else{
+							console.log("Decreased " + product + " by " + cart[product]);
+						}
+					}
+				);
+			}
+			
+			// 1. insert new order document
+			var orderId = undefined;
+			db.collection("orders").insertOne(order, function(err, res){
+				if(err){ 
+					reject(err);
+				}else{
+					orderId = res.insertedId;
+					console.log("1 document inserted " + orderId);
+					resolve(orderId);
+				}
+			})
+			
+		});
 	})
 }
 

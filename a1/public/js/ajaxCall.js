@@ -71,3 +71,24 @@ var ajaxGet = function (url, onSuccess, onError){
  	};
  	sendRequest();
 }
+
+var ajaxPost = function (url, data, onSuccess, onError){
+	// data: payload of the request
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url);
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+	// event handling
+	xhr.timeout = 5000;
+	xhr.onreadystatechange = function(){
+      	if (xhr.readyState === 4){
+         	if (xhr.status === 200){
+            	console.log("Posted successfully" + xhr.responseText) ;
+            	onSuccess(xhr.responseText);
+         	}else{
+            	onError(xhr.status);
+         	}
+      	}
+	};
+	xhr.send(JSON.stringify(data));
+}

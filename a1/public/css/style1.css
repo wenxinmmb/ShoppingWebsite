@@ -79,23 +79,16 @@ button:hover {
 }
 
 #content { 
-    width: 1000px; 
-    margin: auto;
+    width: 1000px; margin: auto;
 }
 
-#price-filter{
-  text-align: center;
-}
-#menuView{
-  width: 300px; 
-  display: inline-block;
-  vertical-align: top;
-}
-
-#menu {  
+#menu { 
+    width: 300px; 
     list-style-type: none;
     margin: 0;
     padding: 0;
+    display: inline-block;
+    vertical-align: top;
 }
 
 #productView { 
